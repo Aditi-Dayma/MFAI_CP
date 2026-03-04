@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FaceRec AI — PCA vs CNN Face Recognition</title>
+    <meta name="description"
+        content="Research-level face recognition system comparing PCA (Eigenfaces) and CNN deep learning approaches for dimensionality reduction and classification.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+
+<body>
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 40 40" fill="none">
+                        <rect width="40" height="40" rx="10" fill="url(#grad)" />
+                        <defs>
+                            <linearGradient id="grad" x1="0" y1="0" x2="40" y2="40">
+                                <stop stop-color="#4a90d9" />
+                                <stop offset="1" stop-color="#7c5cbf" />
+                            </linearGradient>
+                        </defs>
+                        <path
+                            d="M12 16C12 13.8 13.8 12 16 12H24C26.2 12 28 13.8 28 16V24C28 26.2 26.2 28 24 28H16C13.8 28 12 26.2 12 24V16Z"
+                            stroke="white" stroke-width="1.5" fill="none" />
+                        <circle cx="17" cy="18" r="1.5" fill="white" />
+                        <circle cx="23" cy="18" r="1.5" fill="white" />
+                        <path d="M17 23C17 23 19 25 20 25C21 25 23 23 23 23" stroke="white" stroke-width="1.2"
+                            stroke-linecap="round" />
+                    </svg>
+                </div>
+                <div class="logo-text">
+                    <span class="logo-title">FaceRec AI</span>
+                    <span class="logo-sub">PCA vs CNN Analysis</span>
+                </div>
+            </div>
+        </div>
+        <ul class="nav-links">
+            <li>
+                <a href="#" class="nav-link active" data-section="home" id="nav-home">
+                    <span class="nav-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                            <polyline points="9 22 9 12 15 12 15 22" />
+                        </svg>
+                    </span>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" class="nav-link" data-section="upload" id="nav-upload">
+                    <span class="nav-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                            <polyline points="17 8 12 3 7 8" />
+                            <line x1="12" y1="3" x2="12" y2="15" />
+                        </svg>
+                    </span>
+                    <span>Dataset Upload</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" class="nav-link" data-section="pca" id="nav-pca">
+                    <span class="nav-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="7" height="7" />
+                            <rect x="14" y="3" width="7" height="7" />
+                            <rect x="14" y="14" width="7" height="7" />
+                            <rect x="3" y="14" width="7" height="7" />
+                        </svg>
+                    </span>
+                    <span>PCA — Eigenfaces</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" class="nav-link" data-section="cnn" id="nav-cnn">
+                    <span class="nav-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                            <path d="M2 17l10 5 10-5" />
+                            <path d="M2 12l10 5 10-5" />
+                        </svg>
+                    </span>
+                    <span>CNN Model</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" class="nav-link" data-section="compare" id="nav-compare">
+                    <span class="nav-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="20" x2="18" y2="10" />
+                            <line x1="12" y1="20" x2="12" y2="4" />
+                            <line x1="6" y1="20" x2="6" y2="14" />
+                        </svg>
+                    </span>
+                    <span>Compare Models</span>
+                </a>
+            </li>
+        </ul>
+
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="main-content" id="mainContent">
+
+        <!-- ====== MODULE 1: HOME DASHBOARD ====== -->
+        <section class="section active" id="section-home">
+            <div class="section-header">
+                <div>
+                    <h1 class="section-title">Face Recognition Analysis</h1>
+                    <p class="section-subtitle">PCA (Eigenfaces) vs CNN — A Comparative Study</p>
+                </div>
+                <div class="header-badge">
+                    <span class="status-dot"></span>
+                    Ready
+                </div>
+            </div>
+
+            <!-- Abstract Cards -->
+            <div class="grid grid-2">
+                <div class="card card-accent-blue">
+                    <div class="card-header">
+                        <div class="card-icon blue">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="7" height="7" />
+                                <rect x="14" y="3" width="7" height="7" />
+                                <rect x="14" y="14" width="7" height="7" />
+                                <rect x="3" y="14" width="7" height="7" />
+                            </svg>
+                        </div>
+                        <h3>PCA — Eigenfaces</h3>
+                    </div>
+                    <p class="card-text">
+                        Principal Component Analysis reduces facial image dimensionality by projecting faces into a
+                        lower-dimensional eigenspace.
+                        The method computes eigenvectors (eigenfaces) from the covariance matrix of training images,
+                        retaining the most discriminative features for recognition via Euclidean distance matching.
+                    </p>
+                    <div class="card-tags">
+                        <span class="tag">Dimensionality Reduction</span>
+                        <span class="tag">Linear Algebra</span>
+                        <span class="tag">Unsupervised</span>
+                    </div>
+                </div>
+                <div class="card card-accent-purple">
+                    <div class="card-header">
+                        <div class="card-icon purple">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                                <path d="M2 17l10 5 10-5" />
+                                <path d="M2 12l10 5 10-5" />
+                            </svg>
+                        </div>
+                        <h3>CNN — Deep Learning</h3>
+                    </div>
+                    <p class="card-text">
+                        Convolutional Neural Networks learn hierarchical spatial features directly from raw pixel data
+                        through convolutional filters, pooling layers, and fully connected classifiers.
+                        CNNs automatically extract discriminative facial features, offering superior robustness to
+                        variations in pose, illumination, and expression.
+                    </p>
+                    <div class="card-tags">
+                        <span class="tag">Deep Learning</span>
+                        <span class="tag">Feature Extraction</span>
+                        <span class="tag">Supervised</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="card">
+                <h3 class="card-section-title">Quick Actions</h3>
+                <div class="action-buttons">
+                    <button class="btn btn-primary btn-lg" onclick="navigateTo('upload')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                            <polyline points="17 8 12 3 7 8" />
+                            <line x1="12" y1="3" x2="12" y2="15" />
+                        </svg>
+                        Upload Dataset
+                    </button>
+                    <button class="btn btn-blue btn-lg" onclick="navigateTo('pca')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="7" height="7" />
+                            <rect x="14" y="3" width="7" height="7" />
+                            <rect x="14" y="14" width="7" height="7" />
+                            <rect x="3" y="14" width="7" height="7" />
+                        </svg>
+                        Run PCA Model
+                    </button>
+                    <button class="btn btn-purple btn-lg" onclick="navigateTo('cnn')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                            <path d="M2 17l10 5 10-5" />
+                            <path d="M2 12l10 5 10-5" />
+                        </svg>
+                        Run CNN Model
+                    </button>
+                    <button class="btn btn-gradient btn-lg" onclick="navigateTo('compare')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="20" x2="18" y2="10" />
+                            <line x1="12" y1="20" x2="12" y2="4" />
+                            <line x1="6" y1="20" x2="6" y2="14" />
+                        </svg>
+                        Compare Models
+                    </button>
+                </div>
+            </div>
+
+            <!-- Research Context -->
+            <div class="card">
+                <h3 class="card-section-title">Project Overview</h3>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="stat-dataset">—</div>
+                        <div class="stat-label">Dataset Images</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="stat-classes">—</div>
+                        <div class="stat-label">Classes</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="stat-pca-acc">—</div>
+                        <div class="stat-label">PCA Accuracy</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="stat-cnn-acc">—</div>
+                        <div class="stat-label">CNN Accuracy</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ====== MODULE 2: DATASET UPLOAD ====== -->
+        <section class="section" id="section-upload">
+            <div class="section-header">
+                <div>
+                    <h1 class="section-title">Dataset Upload</h1>
+                    <p class="section-subtitle">Upload face images organized in subfolders (one per person)</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="upload-zone" id="uploadZone">
+                    <div class="upload-icon">
+                        <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="8" y="8" width="48" height="48" rx="8" stroke-dasharray="6 3" opacity="0.5" />
+                            <path d="M32 20V44" stroke-width="2.5" stroke-linecap="round" />
+                            <path d="M22 30L32 20L42 30" stroke-width="2.5" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                        </svg>
+                    </div>
+                    <h3>Drop your dataset folder here</h3>
+                    <p>or click to browse. Structure: <code>person_name/image.jpg</code></p>
+                    <input type="file" id="fileInput" multiple webkitdirectory directory accept="image/*" hidden>
+                    <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()">Select
+                        Folder</button>
+                </div>
+            </div>
+
+            <!-- Upload Progress -->
+            <div class="card" id="uploadProgress" style="display:none;">
+                <div class="progress-header">
+                    <h3>Processing Images</h3>
+                    <span class="progress-text" id="progressText">Uploading...</span>
+                </div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+            </div>
+
+            <!-- Dataset Info -->
+            <div class="card" id="datasetInfo" style="display:none;">
+                <h3 class="card-section-title">Dataset Summary</h3>
+                <div class="stats-grid" id="datasetStats"></div>
+            </div>
+
+            <!-- Preview Grid -->
+            <div class="card" id="previewCard" style="display:none;">
+                <h3 class="card-section-title">Processed Faces Preview</h3>
+                <div class="image-grid" id="previewGrid"></div>
+            </div>
+        </section>
+
+        <!-- ====== MODULE 3: PCA (EIGENFACES) ====== -->
+        <section class="section" id="section-pca">
+            <div class="section-header">
+                <div>
+                    <h1 class="section-title">PCA — Eigenfaces</h1>
+                    <p class="section-subtitle">Principal Component Analysis for face recognition</p>
+                </div>
+                <button class="btn btn-blue" id="btnTrainPCA" onclick="trainPCA()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="5 3 19 12 5 21 5 3" />
+                    </svg>
+                    Train PCA Model
+                </button>
+            </div>
+
+            <!-- PCA Loading -->
+            <div class="loading-overlay" id="pcaLoading" style="display:none;">
+                <div class="spinner"></div>
+                <p>Training PCA model...</p>
+            </div>
+
+            <!-- PCA Results -->
+            <div id="pcaResults" style="display:none;">
+                <!-- Metrics Row -->
+                <div class="stats-grid" id="pcaMetrics"></div>
+
+                <!-- Mean Face & Eigenfaces -->
+                <div class="grid grid-2">
+                    <div class="card">
+                        <h3 class="card-section-title">Mean Face</h3>
+                        <div class="image-display" id="meanFaceDisplay"></div>
+                    </div>
+                    <div class="card">
+                        <h3 class="card-section-title">Top Eigenfaces</h3>
+                        <div class="eigenface-grid" id="eigenfaceGrid"></div>
+                    </div>
+                </div>
+
+                <!-- Charts -->
+                <div class="grid grid-2">
+                    <div class="card">
+                        <h3 class="card-section-title">Eigenvalue Distribution</h3>
+                        <div class="chart-display" id="eigenvalueChart"></div>
+                    </div>
+                    <div class="card">
+                        <h3 class="card-section-title">Confusion Matrix</h3>
+                        <div class="chart-display" id="confusionMatrix"></div>
+                    </div>
+                </div>
+
+                <!-- PCA Prediction -->
+                <div class="card">
+                    <h3 class="card-section-title">Test Recognition</h3>
+                    <div class="prediction-panel">
+                        <div class="upload-mini">
+                            <input type="file" id="pcaTestInput" accept="image/*" hidden>
+                            <button class="btn btn-outline" onclick="document.getElementById('pcaTestInput').click()">
+                                Upload Test Image
+                            </button>
+                            <span class="upload-filename" id="pcaTestFilename"></span>
+                        </div>
+                        <button class="btn btn-blue" id="btnPredictPCA" onclick="predictPCA()" disabled>Recognize
+                            Face</button>
+                    </div>
+                    <div id="pcaPredictionResult" style="display:none;">
+                        <div class="prediction-result">
+                            <div class="pred-images">
+                                <div class="pred-img-card">
+                                    <h4>Original</h4>
+                                    <div id="pcaOriginal"></div>
+                                </div>
+                                <div class="pred-arrow">→</div>
+                                <div class="pred-img-card">
+                                    <h4>Reconstructed</h4>
+                                    <div id="pcaReconstructed"></div>
+                                </div>
+                            </div>
+                            <div class="pred-info" id="pcaPredInfo"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PCA Placeholder -->
+            <div class="placeholder-card" id="pcaPlaceholder">
+                <div class="placeholder-icon">
+                    <svg viewBox="0 0 80 80" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.4">
+                        <rect x="10" y="10" width="25" height="25" rx="3" />
+                        <rect x="45" y="10" width="25" height="25" rx="3" />
+                        <rect x="10" y="45" width="25" height="25" rx="3" />
+                        <rect x="45" y="45" width="25" height="25" rx="3" />
+                    </svg>
+                </div>
+                <h3>Train the PCA Model</h3>
+                <p>Upload a dataset first, then click "Train PCA Model" to compute eigenfaces and evaluate recognition
+                    accuracy.</p>
+            </div>
+        </section>
+
+        <!-- ====== MODULE 4: CNN ====== -->
+        <section class="section" id="section-cnn">
+            <div class="section-header">
+                <div>
+                    <h1 class="section-title">CNN Model</h1>
+                    <p class="section-subtitle">Convolutional Neural Network for face recognition</p>
+                </div>
+                <button class="btn btn-purple" id="btnTrainCNN" onclick="trainCNN()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="5 3 19 12 5 21 5 3" />
+                    </svg>
+                    Train CNN Model
+                </button>
+            </div>
+
+            <!-- CNN Loading -->
+            <div class="loading-overlay" id="cnnLoading" style="display:none;">
+                <div class="spinner"></div>
+                <p>Training CNN model — this may take a few minutes...</p>
+            </div>
+
+            <!-- CNN Results -->
+            <div id="cnnResults" style="display:none;">
+                <div class="stats-grid" id="cnnMetrics"></div>
+
+                <!-- Accuracy / Loss Chart -->
+                <div class="card">
+                    <h3 class="card-section-title">Training History — Accuracy & Loss</h3>
+                    <div class="chart-display chart-wide" id="accLossChart"></div>
+                </div>
+
+                <!-- CNN Prediction -->
+                <div class="card">
+                    <h3 class="card-section-title">Test Recognition</h3>
+                    <div class="prediction-panel">
+                        <div class="upload-mini">
+                            <input type="file" id="cnnTestInput" accept="image/*" hidden>
+                            <button class="btn btn-outline" onclick="document.getElementById('cnnTestInput').click()">
+                                Upload Test Image
+                            </button>
+                            <span class="upload-filename" id="cnnTestFilename"></span>
+                        </div>
+                        <button class="btn btn-purple" id="btnPredictCNN" onclick="predictCNN()" disabled>Recognize
+                            Face</button>
+                    </div>
+                    <div id="cnnPredictionResult" style="display:none;">
+                        <div class="prediction-result">
+                            <div class="pred-images">
+                                <div class="pred-img-card">
+                                    <h4>Test Image</h4>
+                                    <div id="cnnOriginal"></div>
+                                </div>
+                            </div>
+                            <div class="pred-info" id="cnnPredInfo"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CNN Placeholder -->
+            <div class="placeholder-card" id="cnnPlaceholder">
+                <div class="placeholder-icon">
+                    <svg viewBox="0 0 80 80" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.4">
+                        <path d="M40 10L10 25l30 15 30-15L40 10z" />
+                        <path d="M10 55l30 15 30-15" />
+                        <path d="M10 40l30 15 30-15" />
+                    </svg>
+                </div>
+                <h3>Train the CNN Model</h3>
+                <p>Upload a dataset first, then click "Train CNN Model" to build and evaluate the convolutional neural
+                    network.</p>
+            </div>
+        </section>
+
+        <!-- ====== MODULE 5: COMPARISON ====== -->
+        <section class="section" id="section-compare">
+            <div class="section-header">
+                <div>
+                    <h1 class="section-title">Model Comparison</h1>
+                    <p class="section-subtitle">Side-by-side performance analysis of PCA vs CNN</p>
+                </div>
+                <button class="btn btn-gradient" id="btnCompare" onclick="compareModels()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="20" x2="18" y2="10" />
+                        <line x1="12" y1="20" x2="12" y2="4" />
+                        <line x1="6" y1="20" x2="6" y2="14" />
+                    </svg>
+                    Generate Comparison
+                </button>
+            </div>
+
+            <!-- Comparison Loading -->
+            <div class="loading-overlay" id="compareLoading" style="display:none;">
+                <div class="spinner"></div>
+                <p>Generating comparison...</p>
+            </div>
+
+            <!-- Comparison Results -->
+            <div id="compareResults" style="display:none;">
+                <!-- Comparison Table -->
+                <div class="card">
+                    <h3 class="card-section-title">Performance Metrics</h3>
+                    <div class="table-container">
+                        <table class="comparison-table" id="comparisonTable">
+                            <thead>
+                                <tr>
+                                    <th>Feature</th>
+                                    <th class="col-pca">PCA (Eigenfaces)</th>
+                                    <th class="col-cnn">CNN</th>
+                                </tr>
+                            </thead>
+                            <tbody id="comparisonTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Comparison Chart -->
+                <div class="card">
+                    <h3 class="card-section-title">Visual Comparison</h3>
+                    <div class="chart-display chart-wide" id="comparisonChart"></div>
+                </div>
+
+                <!-- Summary -->
+                <div class="card" id="comparisonSummary"></div>
+            </div>
+
+            <!-- Comparison Placeholder -->
+            <div class="placeholder-card" id="comparePlaceholder">
+                <div class="placeholder-icon">
+                    <svg viewBox="0 0 80 80" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.4">
+                        <line x1="55" y1="60" x2="55" y2="25" />
+                        <line x1="40" y1="60" x2="40" y2="15" />
+                        <line x1="25" y1="60" x2="25" y2="35" />
+                        <rect x="20" y="60" width="10" height="2" rx="1" />
+                        <rect x="35" y="60" width="10" height="2" rx="1" />
+                        <rect x="50" y="60" width="10" height="2" rx="1" />
+                    </svg>
+                </div>
+                <h3>Compare Both Models</h3>
+                <p>Train both PCA and CNN models first, then click "Generate Comparison" for a side-by-side analysis.
+                </p>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Toast Notification -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+
+</html>
